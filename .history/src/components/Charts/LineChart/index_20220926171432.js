@@ -12,13 +12,13 @@ const generateOptions = (data) => {
       height: 500,
     },
     title: {
-      text: "Biểu đồ thể hiện covid-19 ở các quốc gia",
+      text: "Tổng ca nhiễm",
     },
     xAxis: {
       categories: categories,
       crosshair: true,
     },
-    colors: ["#c9302c","#28a745",""],
+    colors: ["#F3585B"],
     yAxis: {
       min: 0,
       title: {
@@ -46,15 +46,7 @@ const generateOptions = (data) => {
     series: [
       {
         name: "Số ca nhiễm",
-        data: data.map((item) => item.Confirmed),
-      },
-      {
-        name: "Số ca khỏi",
-        data: data.map((item) => item.Active),
-      },
-      {
-        name: "Số ca tử vong",
-        data: data.map((item) => item.Deaths),
+        data: data,
       },
     ],
   };
@@ -62,7 +54,26 @@ const generateOptions = (data) => {
 const LineChart = ({ data }) => {
   const [options, setOptions] = useState({});
   const [reportType, setReportType] = useState("all");
-  
+  const [state, setState] = useState("comfirmed");
+
+  useEffect(() => {
+    let tmp = [];
+    switch (state) {
+      case "confirmed":
+        tmp = data.map((item) => item.Confirmed);
+        break;
+      case "active":
+        tmp = data.map((item) => item.Active);
+        break;
+      case "deaths":
+        tmp = data.map((item) => item.Deaths);
+        break;
+      default:
+        tmp = data.map((item) => item.Confirmed);
+        break;
+    }
+    setOptions(generateOptions(tmp));
+  }, [data, state]);
 
   useEffect( () => {
     let customData = [];
@@ -85,10 +96,32 @@ const LineChart = ({ data }) => {
   }, [data, reportType]);
   return (
     <>
+      <ButtonGroup size="small" aria-label="small outlined button group">
+        <Button
+          color={state === "confirmed" ? "secondary" : ""}
+          onClick={() => setState("confirmed")}
+        >
+          Số ca nhiễm
+        </Button>
+        <Button
+          color={state === "active" ? "secondary" : ""}
+          onClick={() => setState("active")}
+        >
+          Số ca khỏi
+        </Button>
+        <Button
+          color={state === "deaths" ? "secondary" : ""}
+          onClick={() => setState("deaths")}
+        >
+          Số ca tử vong
+        </Button>
+      </ButtonGroup>
       <ButtonGroup
         size="small"
         aria-label="small outlined button group"
-        style={{display:'flex', justifyContent: 'flex-end'}}
+        style={{
+          float: "right",
+        }}
       >
         <Button
           color={reportType === "all" ? "secondary" : ""}

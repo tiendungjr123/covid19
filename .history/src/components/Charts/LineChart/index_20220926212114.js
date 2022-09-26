@@ -52,10 +52,6 @@ const generateOptions = (data) => {
         name: "Số ca khỏi",
         data: data.map((item) => item.Active),
       },
-      {
-        name: "Số ca tử vong",
-        data: data.map((item) => item.Deaths),
-      },
     ],
   };
 };
@@ -88,7 +84,9 @@ const LineChart = ({ data }) => {
       <ButtonGroup
         size="small"
         aria-label="small outlined button group"
-        style={{display:'flex', justifyContent: 'flex-end'}}
+        style={{
+          float: "right",
+        }}
       >
         <Button
           color={reportType === "all" ? "secondary" : ""}

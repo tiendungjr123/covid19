@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { Button, ButtonGroup } from "@material-ui/core";
 
-const generateOptions = (data) => {
+const generateOptions = (data, name,color) => {
   const categories = data.map((item) => moment(item.Date).format("DD/MM/YYYY"));
 
   return {
@@ -18,7 +18,7 @@ const generateOptions = (data) => {
       categories: categories,
       crosshair: true,
     },
-    colors: ["#c9302c","#28a745",""],
+    colors: color,
     yAxis: {
       min: 0,
       title: {
@@ -45,16 +45,8 @@ const generateOptions = (data) => {
     },
     series: [
       {
-        name: "Số ca nhiễm",
-        data: data.map((item) => item.Confirmed),
-      },
-      {
-        name: "Số ca khỏi",
-        data: data.map((item) => item.Active),
-      },
-      {
-        name: "Số ca tử vong",
-        data: data.map((item) => item.Deaths),
+        name: name,
+        data: data,
       },
     ],
   };
@@ -62,7 +54,35 @@ const generateOptions = (data) => {
 const LineChart = ({ data }) => {
   const [options, setOptions] = useState({});
   const [reportType, setReportType] = useState("all");
-  
+  const [state, setState] = useState("comfirmed");
+
+  useEffect(() => {
+    let name= '';
+    let color = []
+    let tmp = [];
+    switch (state) {
+      case "confirmed":
+        name ='Số ca nhiểm';
+        color = ["#c9302c"];
+        tmp = data.map((item) => item.Confirmed);
+        break;
+      case "active":
+        name ='Số ca khỏi';
+        color = ["#28a745"];
+        tmp = data.map((item) => item.Active);
+        break;
+      case "deaths":
+        name ='Số ca tử vong';
+        color= ["gray"];
+        tmp = data.map((item) => item.Deaths);
+        
+        break;
+      default:
+        tmp = data.map((item) => item.Confirmed);
+        break;
+    }
+    setOptions(generateOptions(tmp,name,color));
+  }, [data, state]);
 
   useEffect( () => {
     let customData = [];
@@ -85,10 +105,32 @@ const LineChart = ({ data }) => {
   }, [data, reportType]);
   return (
     <>
+      <ButtonGroup size="small" aria-label="small outlined button group">
+        <Button
+          color={state === "confirmed" ? "#c9302c" : ""}
+          onClick={() => setState("confirmed")}
+        >
+          Số ca nhiễm
+        </Button>
+        <Button
+          color={state === "active" ? "#28a745" : ""}
+          onClick={() => setState("active")}
+        >
+          Số ca khỏi
+        </Button>
+        <Button
+          color={state === "deaths" ? "gray" : ""}
+          onClick={() => setState("deaths")}
+        >
+          Số ca tử vong
+        </Button>
+      </ButtonGroup>
       <ButtonGroup
         size="small"
         aria-label="small outlined button group"
-        style={{display:'flex', justifyContent: 'flex-end'}}
+        style={{
+          float: "right",
+        }}
       >
         <Button
           color={reportType === "all" ? "secondary" : ""}

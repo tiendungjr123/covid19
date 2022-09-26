@@ -88,7 +88,6 @@ const LineChart = ({ data }) => {
       <ButtonGroup
         size="small"
         aria-label="small outlined button group"
-        style={{display:'flex', justifyContent: 'flex-end'}}
       >
         <Button
           color={reportType === "all" ? "secondary" : ""}

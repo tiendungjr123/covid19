@@ -1,24 +1,24 @@
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
 import React, { useEffect, useState } from "react";
-import moment from "moment";
+import moment from 'moment';
 import { Button, ButtonGroup } from "@material-ui/core";
 
 const generateOptions = (data) => {
-  const categories = data.map((item) => moment(item.Date).format("DD/MM/YYYY"));
+  const categories = data.map((item) => moment(item.Date).format('DD/MM/YYYY'));
 
   return {
     chart: {
       height: 500,
     },
     title: {
-      text: "Biểu đồ thể hiện covid-19 ở các quốc gia",
+      text: "Tổng ca nhiễm",
     },
     xAxis: {
       categories: categories,
       crosshair: true,
     },
-    colors: ["#c9302c","#28a745",""],
+    colors: ["#F3585B"],
     yAxis: {
       min: 0,
       title: {
@@ -45,35 +45,34 @@ const generateOptions = (data) => {
     },
     series: [
       {
-        name: "Số ca nhiễm",
+        name: "Tổng Ca nhiễm",
         data: data.map((item) => item.Confirmed),
       },
       {
-        name: "Số ca khỏi",
-        data: data.map((item) => item.Active),
+        name: "Tổng Ca nhiễm",
+        data: data.map((item) => item.Confirmed),
       },
       {
-        name: "Số ca tử vong",
-        data: data.map((item) => item.Deaths),
+        name: "Tổng Ca nhiễm",
+        data: data.map((item) => item.Confirmed),
       },
     ],
   };
 };
-const LineChart = ({ data }) => {
+const  LineChart = ({ data }) => {
   const [options, setOptions] = useState({});
-  const [reportType, setReportType] = useState("all");
-  
+  const [reportType, setReportType] = useState('all');
 
-  useEffect( () => {
+  useEffect(() => {
     let customData = [];
     switch (reportType) {
-      case "all":
+      case 'all':
         customData = data;
         break;
-      case "30":
+      case '30':
         customData = data.slice(Math.max(data.length - 30, 1));
         break;
-      case "7":
+      case '7':
         customData = data.slice(Math.max(data.length - 7, 1));
         break;
 
@@ -81,36 +80,40 @@ const LineChart = ({ data }) => {
         customData = data;
         break;
     }
+
     setOptions(generateOptions(customData));
   }, [data, reportType]);
   return (
     <>
-      <ButtonGroup
-        size="small"
-        aria-label="small outlined button group"
-        style={{display:'flex', justifyContent: 'flex-end'}}
+    <ButtonGroup
+      size='small'
+      aria-label='small outlined button group'
+      style={{
+        display: 'flex',
+        justifyContent: 'flex-end',
+      }}
+    >
+      <Button
+        color={reportType === 'all' ? 'secondary' : ''}
+        onClick={() => setReportType('all')}
       >
-        <Button
-          color={reportType === "all" ? "secondary" : ""}
-          onClick={() => setReportType("all")}
-        >
-          Tất cả
-        </Button>
-        <Button
-          color={reportType === "30" ? "secondary" : ""}
-          onClick={() => setReportType("30")}
-        >
-          30 ngày
-        </Button>
-        <Button
-          color={reportType === "7" ? "secondary" : ""}
-          onClick={() => setReportType("7")}
-        >
-          7 ngày
-        </Button>
-      </ButtonGroup>
-      <HighchartsReact highcharts={Highcharts} options={options} />
-    </>
+        Tất cả
+      </Button>
+      <Button
+        color={reportType === '30' ? 'secondary' : ''}
+        onClick={() => setReportType('30')}
+      >
+        30 ngày
+      </Button>
+      <Button
+        color={reportType === '7' ? 'secondary' : ''}
+        onClick={() => setReportType('7')}
+      >
+        7 ngày
+      </Button>
+    </ButtonGroup>
+    <HighchartsReact highcharts={Highcharts} options={options} />
+  </>
   );
-};
+}
 export default React.memo(LineChart);

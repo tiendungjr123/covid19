@@ -12,13 +12,13 @@ const generateOptions = (data) => {
       height: 500,
     },
     title: {
-      text: "Biểu đồ thể hiện covid-19 ở các quốc gia",
+      text: "Tổng ca nhiễm",
     },
     xAxis: {
       categories: categories,
       crosshair: true,
     },
-    colors: ["#c9302c","#28a745",""],
+    colors: ["#F3585B"],
     yAxis: {
       min: 0,
       title: {
@@ -45,16 +45,8 @@ const generateOptions = (data) => {
     },
     series: [
       {
-        name: "Số ca nhiễm",
-        data: data.map((item) => item.Confirmed),
-      },
-      {
-        name: "Số ca khỏi",
-        data: data.map((item) => item.Active),
-      },
-      {
-        name: "Số ca tử vong",
-        data: data.map((item) => item.Deaths),
+        name: "",
+        data: {},
       },
     ],
   };
@@ -62,9 +54,8 @@ const generateOptions = (data) => {
 const LineChart = ({ data }) => {
   const [options, setOptions] = useState({});
   const [reportType, setReportType] = useState("all");
-  
 
-  useEffect( () => {
+  useEffect(() => {
     let customData = [];
     switch (reportType) {
       case "all":
@@ -81,14 +72,45 @@ const LineChart = ({ data }) => {
         customData = data;
         break;
     }
+
     setOptions(generateOptions(customData));
   }, [data, reportType]);
   return (
-    <>
+    <div }>
       <ButtonGroup
         size="small"
         aria-label="small outlined button group"
-        style={{display:'flex', justifyContent: 'flex-end'}}
+        style={{
+          display: "flex",
+          justifyContent: "flex-start",
+        }}
+      >
+        <Button
+          color={reportType === "all" ? "secondary" : ""}
+          onClick={() => setReportType("all")}
+        >
+          Tất cả
+        </Button>
+        <Button
+          color={reportType === "30" ? "secondary" : ""}
+          onClick={() => setReportType("30")}
+        >
+          30 ngày
+        </Button>
+        <Button
+          color={reportType === "7" ? "secondary" : ""}
+          onClick={() => setReportType("7")}
+        >
+          7 ngày
+        </Button>
+      </ButtonGroup>
+      <ButtonGroup
+        size="small"
+        aria-label="small outlined button group"
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+        }}
       >
         <Button
           color={reportType === "all" ? "secondary" : ""}
@@ -110,7 +132,7 @@ const LineChart = ({ data }) => {
         </Button>
       </ButtonGroup>
       <HighchartsReact highcharts={Highcharts} options={options} />
-    </>
+    </div>
   );
 };
 export default React.memo(LineChart);

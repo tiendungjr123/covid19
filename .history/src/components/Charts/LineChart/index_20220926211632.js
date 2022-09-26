@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { Button, ButtonGroup } from "@material-ui/core";
 
-const generateOptions = (data) => {
+const generateOptions = (data, name,color) => {
   const categories = data.map((item) => moment(item.Date).format("DD/MM/YYYY"));
 
   return {
@@ -18,7 +18,7 @@ const generateOptions = (data) => {
       categories: categories,
       crosshair: true,
     },
-    colors: ["#c9302c","#28a745",""],
+    colors: color,
     yAxis: {
       min: 0,
       title: {
@@ -47,14 +47,6 @@ const generateOptions = (data) => {
       {
         name: "Số ca nhiễm",
         data: data.map((item) => item.Confirmed),
-      },
-      {
-        name: "Số ca khỏi",
-        data: data.map((item) => item.Active),
-      },
-      {
-        name: "Số ca tử vong",
-        data: data.map((item) => item.Deaths),
       },
     ],
   };
@@ -88,7 +80,9 @@ const LineChart = ({ data }) => {
       <ButtonGroup
         size="small"
         aria-label="small outlined button group"
-        style={{display:'flex', justifyContent: 'flex-end'}}
+        style={{
+          float: "right",
+        }}
       >
         <Button
           color={reportType === "all" ? "secondary" : ""}
