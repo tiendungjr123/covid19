@@ -42,7 +42,7 @@ function App() {
     }
   }, [countries, selectedCountryId]);
   return (
-    <Container style={{marginTop:20}}>
+    <Container>
       <Typography variant="h2" component="h2">
         Số liệu COVID-19
       </Typography>
